@@ -3,7 +3,7 @@
 // Live Bidding???
 // Graphing prices???
 
-pragma solidity ^0.6.6;
+pragma solidity 0.6.6;
 
 contract LandContract {
     string public surveyNumber;
