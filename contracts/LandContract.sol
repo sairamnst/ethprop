@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// Graphing prices???
-
 pragma solidity 0.6.6;
 
 import "./GovtMock.sol";
