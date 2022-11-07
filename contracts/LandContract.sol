@@ -12,6 +12,7 @@ contract LandContract {
     string public taluk;
     string public district;
     address verifier;
+    uint256 public gasReserve;
 
     enum CONTRACT_STATE {
         open,
@@ -31,7 +32,8 @@ contract LandContract {
         string memory _snum,
         string memory _taluk,
         string memory _district,
-        address _ver
+        address _ver,
+        uint256 _gasreserve
     ) public {
         taluk = _taluk;
         surveyNumber = _snum;
@@ -39,6 +41,7 @@ contract LandContract {
         ctr_state = CONTRACT_STATE.closed;
         owner = payable(msg.sender);
         verifier = _ver;
+        gasReserve = _gasreserve;
     }
 
     function get_current_owner() public view returns (address) {
@@ -63,16 +66,16 @@ contract LandContract {
             for (uint256 i = 0; i < bidders.length; i++) {
                 address payable bidder = payable(bidders[i]);
                 uint256 amount = bidderToWei[bidders[i]];
-                bidder.transfer(amount - 430500000000000);
+                bidder.transfer(amount - gasReserve);
             }
         } else {
-            owner.transfer(max_wei - 430500000000000);
+            owner.transfer(max_wei - gasReserve);
             prev_owners.push(owner);
             owner = payable(max_bidder);
             for (uint256 i = 0; i < bidders.length; i++) {
                 address payable bidder = payable(bidders[i]);
                 uint256 amount = bidderToWei[bidders[i]];
-                bidder.transfer(amount - 430500000000000);
+                bidder.transfer(amount - gasReserve);
             }
 
             // Delete bidders
@@ -132,8 +135,12 @@ contract LandContract {
     function enter() public payable {
         GovtMock govtmock = GovtMock(verifier);
         require(govtmock.verify_address(msg.sender));
-        require(!bidder_exists(msg.sender));
-        require(msg.value > 430500000000000);
+        require(msg.value > gasReserve);
+        if (bidder_exists(msg.sender)) {
+            uint256 amount = bidderToWei[msg.sender];
+            payable(msg.sender).transfer(amount - gasReserve);
+            removeBidder(msg.sender);
+        }
         bidders.push(msg.sender);
         bidderToWei[msg.sender] = msg.value;
     }
