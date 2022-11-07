@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// Live Bidding???
 // Graphing prices???
 
 pragma solidity 0.6.6;
@@ -23,6 +22,7 @@ contract LandContract {
 
     address payable public owner;
     address[] public prev_owners;
+    uint256[] public prev_prices;
     address[] public bidders;
 
     mapping(address => uint256) bidderToWei;
@@ -68,6 +68,13 @@ contract LandContract {
                 uint256 amount = bidderToWei[bidders[i]];
                 bidder.transfer(amount - gasReserve);
             }
+
+            // Delete bidders
+            for (uint256 i = 0; i < bidders.length; i++) {
+                bidderToWei[bidders[i]] = 0;
+            }
+            bidders = new address[](0);
+            ctr_state = CONTRACT_STATE.closed;
         } else {
             owner.transfer(max_wei - gasReserve);
             prev_owners.push(owner);
@@ -84,6 +91,8 @@ contract LandContract {
             }
             bidders = new address[](0);
             ctr_state = CONTRACT_STATE.closed;
+
+            prev_prices.push(max_wei);
         }
     }
 
