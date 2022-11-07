@@ -5,10 +5,13 @@
 
 pragma solidity 0.6.6;
 
+import "./GovtMock.sol";
+
 contract LandContract {
     string public surveyNumber;
     string public taluk;
     string public district;
+    address verifier;
 
     enum CONTRACT_STATE {
         open,
@@ -27,13 +30,15 @@ contract LandContract {
     constructor(
         string memory _snum,
         string memory _taluk,
-        string memory _district
+        string memory _district,
+        address _ver
     ) public {
         taluk = _taluk;
         surveyNumber = _snum;
         district = _district;
         ctr_state = CONTRACT_STATE.closed;
         owner = payable(msg.sender);
+        verifier = _ver;
     }
 
     function get_current_owner() public view returns (address) {
@@ -125,6 +130,8 @@ contract LandContract {
     }
 
     function enter() public payable {
+        GovtMock govtmock = GovtMock(verifier);
+        require(govtmock.verify_address(msg.sender));
         require(!bidder_exists(msg.sender));
         require(msg.value > 430500000000000);
         bidders.push(msg.sender);
