@@ -3,17 +3,23 @@
 pragma solidity 0.6.6;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NFTMinter is ERC721, Ownable {
+contract NFTMinter is ERC721 {
     uint256 tokenCounter;
     mapping(uint256 => address) idtooriginalowner;
 
     // used by assetsof
     uint256[] tokens;
+    address owner;
 
     constructor() public ERC721("Identity", "DID") {
         tokenCounter = 0;
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
     }
 
     function mintNFT(address owner) public onlyOwner returns (uint256) {
