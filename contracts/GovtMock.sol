@@ -8,6 +8,24 @@ import "./LandContract.sol";
 contract GovtMock {
     NFTMinter minter;
     uint256 public gasreserve;
+    address[] landcontracts;
+    address[] available;
+    address[] landowns;
+
+    function owns(address addr) public returns (address[] memory) {
+        uint256 len = landcontracts.length;
+
+        for (uint256 i = 0; i < len; i++) {
+            landcontracts.pop();
+        }
+
+        for (uint256 i = 0; i < landcontracts.length; i++) {
+            LandContract ctrct = LandContract(address(landcontracts[i]));
+            if (address(addr) == address(ctrct.owner())) {
+                landowns.push(address(ctrct));
+            }
+        }
+    }
 
     constructor(uint256 _gasreserve) public {
         minter = new NFTMinter();
@@ -26,10 +44,26 @@ contract GovtMock {
             msg.sender,
             gasreserve
         );
+        landcontracts.push(address(ctrct));
     }
 
     function get_verified() public {
         NFTMinter(address(minter)).mintNFT(msg.sender);
+    }
+
+    function auctionable() public returns (address[] memory) {
+        uint256 len = available.length;
+
+        for (uint256 i = 0; i < len; i++) {
+            available.pop();
+        }
+
+        for (uint256 i = 0; i < landcontracts.length; i++) {
+            LandContract ctrct = LandContract(landcontracts[i]);
+            available.push(address(ctrct));
+        }
+
+        return available;
     }
 
     function verify_address(address addr) public returns (bool) {
