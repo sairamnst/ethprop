@@ -14,12 +14,12 @@ def get_account():
 
 
 def update_front_end():
-    with open("../brownie-config.yaml") as brownie_config:
+    with open("./brownie-config.yaml") as brownie_config:
         config_dict = yaml.load(brownie_config, Loader=yaml.FullLoader)
-        with open("../front_end/src/brownie-config.json", "w") as json_config:
+        with open("./front_end/src/brownie-config.json", "w") as json_config:
             json.dump(config_dict, json_config)
 
-    copy_build_to_front_end("../build", "../front_end/src/chain-info")
+    copy_build_to_front_end("./build", "./front_end/src/chain-info")
 
 
 def copy_build_to_front_end(src, dest):

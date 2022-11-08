@@ -3,12 +3,29 @@
 pragma solidity 0.6.6;
 
 import "./NFTMinter.sol";
+import "./LandContract.sol";
 
 contract GovtMock {
     NFTMinter minter;
+    uint256 public gasreserve;
 
-    constructor() public {
+    constructor(uint256 _gasreserve) public {
         minter = new NFTMinter();
+        gasreserve = _gasreserve;
+    }
+
+    function create_land(
+        string memory _snum,
+        string memory _taluk,
+        string memory _district
+    ) public {
+        LandContract ctrct = new LandContract(
+            _snum,
+            _taluk,
+            _district,
+            msg.sender,
+            gasreserve
+        );
     }
 
     function get_verified() public {

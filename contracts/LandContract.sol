@@ -140,6 +140,7 @@ contract LandContract {
     }
 
     function enter() public payable {
+        require(msg.sender != owner);
         GovtMock govtmock = GovtMock(verifier);
         require(govtmock.verify_address(msg.sender));
         require(msg.value > gasReserve);
