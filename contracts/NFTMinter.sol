@@ -22,10 +22,10 @@ contract NFTMinter is ERC721 {
         _;
     }
 
-    function mintNFT(address owner) public onlyOwner returns (uint256) {
+    function mintNFT(address owner_to) public onlyOwner returns (uint256) {
         uint256 tokenID = tokenCounter;
         tokenCounter += 1;
-        _safeMint(owner, tokenID);
+        _safeMint(owner_to, tokenID);
         idtooriginalowner[tokenID] = msg.sender;
         return tokenID;
     }
@@ -34,14 +34,14 @@ contract NFTMinter is ERC721 {
         return idtooriginalowner[id];
     }
 
-    function assetsOf(address owner) public returns (uint256[] memory) {
+    function assetsOf(address owns_addr) public returns (uint256[] memory) {
         uint256 times = tokens.length;
         for (uint256 i = 0; i < times; i++) {
             tokens.pop();
         }
 
         for (uint256 i = 0; i < tokenCounter; i += 1) {
-            if (ownerOf(i) == owner) {
+            if (ownerOf(i) == owns_addr) {
                 tokens.push(i);
             }
         }
