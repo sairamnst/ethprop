@@ -1,0 +1,6 @@
+.card {
+    background-image: linear-gradient(to bottom right, #00bfad, #99a3d4);
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+}
